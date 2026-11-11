@@ -12,6 +12,8 @@ import { OfficialPdfPreview } from './components/OfficialPdfPreview';
 import { ReportFormModal } from './components/ReportFormModal';
 import { SettingsModal } from './components/SettingsModal';
 import { MonthlySummaryModal } from './components/MonthlySummaryModal';
+import { LoginModal } from './components/LoginModal';
+import { auth, onAuthStateChanged, User } from './firebase';
 import {
   FileText,
   Clock,
@@ -31,7 +33,8 @@ import {
   ChevronRight,
   Download,
   Building2,
-  RefreshCw
+  RefreshCw,
+  LogIn
 } from 'lucide-react';
 import {
   formatDateIndonesian,
@@ -134,6 +137,24 @@ export default function App() {
   const [isRekapOpen, setIsRekapOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // Subscribe to Firebase Auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (user && user.displayName) {
+        setPegawai((prev) => ({
+          ...prev,
+          nama: prev.nama === DEFAULT_PEGAWAI.nama && user.displayName ? user.displayName : prev.nama
+        }));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Statistics
   const stats = aggregateStatistics(reports);
   const todayStr = new Date().toISOString().split('T')[0];
@@ -210,6 +231,8 @@ export default function App() {
         setActiveTab={setActiveTab}
         instansi={instansi}
         pegawai={pegawai}
+        currentUser={currentUser}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
         onOpenNewReport={() => {
           setEditingReport(null);
           setIsFormOpen(true);
@@ -245,13 +268,35 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {currentUser ? (
+              <button
+                type="button"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 text-xs font-medium transition-colors border border-emerald-500/40"
+                title="Kelola Akun Login ASN"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Akun Google: {currentUser.displayName?.split(' ')[0] || currentUser.email}</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-medium transition-colors border border-blue-500/40"
+                title="Masuk dengan Akun Google ASN"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Masuk Akun ASN</span>
+              </button>
+            )}
+
             <button
               onClick={() => {
                 setSettingsInitialTab('instansi');
                 setIsSettingsOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium transition-colors border border-slate-700"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-medium transition-colors border border-slate-700"
               title="Edit Logo Kiri/Kanan & Teks Kop Surat"
             >
               <Building2 className="w-3.5 h-3.5 text-blue-400" />
@@ -740,6 +785,21 @@ export default function App() {
           onClose={() => setIsRekapOpen(false)}
         />
       )}
+
+      {/* Login & Auth Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        currentUser={currentUser}
+        pegawai={pegawai}
+        instansi={instansi}
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+        }}
+        onLogoutSuccess={() => {
+          setCurrentUser(null);
+        }}
+      />
     </div>
   );
 }

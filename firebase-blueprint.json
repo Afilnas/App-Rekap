@@ -1,0 +1,74 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile data for ASN Government Officers",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 150 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "nama": { "type": "string", "maxLength": 150 },
+        "nip": { "type": "string", "maxLength": 50 },
+        "jabatan": { "type": "string", "maxLength": 150 },
+        "pangkat_gol": { "type": "string", "maxLength": 100 },
+        "unit_kerja": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["pegawai", "admin"], "maxLength": 20 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "email", "nama", "nip"]
+    },
+    "LaporanItem": {
+      "title": "LaporanItem",
+      "description": "Daily RKP performance record of an ASN officer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "tanggal": { "type": "string", "maxLength": 20 },
+        "jam_mulai": { "type": "string", "maxLength": 10 },
+        "jam_selesai": { "type": "string", "maxLength": 10 },
+        "uraian_kegiatan": { "type": "string", "maxLength": 2000 },
+        "kategori_skp": { "type": "string", "maxLength": 250 },
+        "volume": { "type": "number" },
+        "satuan": { "type": "string", "maxLength": 50 },
+        "keterangan": { "type": "string", "maxLength": 1000 },
+        "status_verifikasi": { "type": "string", "enum": ["Disetujui", "Menunggu Verifikasi", "Perlu Perbaikan"] },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userId", "tanggal", "uraian_kegiatan"]
+    },
+    "InstansiSettingData": {
+      "title": "InstansiSettingData",
+      "description": "Organization and Kop Surat configuration",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "nama_instansi_atas": { "type": "string", "maxLength": 200 },
+        "nama_dinas": { "type": "string", "maxLength": 200 },
+        "nama_unit_kerja": { "type": "string", "maxLength": 200 },
+        "alamat_instansi": { "type": "string", "maxLength": 500 },
+        "kota_tanda_tangan": { "type": "string", "maxLength": 100 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile documents"
+    },
+    "/laporan/{laporanId}": {
+      "schema": { "$ref": "#/entities/LaporanItem" },
+      "description": "Individual daily RKP report records"
+    },
+    "/instansi/{userId}": {
+      "schema": { "$ref": "#/entities/InstansiSettingData" },
+      "description": "User-customized Kop Surat and agency settings"
+    }
+  }
+}
