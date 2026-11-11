@@ -1,0 +1,6 @@
+{
+  "name": "e-RKP ASN - Laporan Kinerja Harian & Bukti Dukung",
+  "description": "Aplikasi Pelaporan Rencana Kinerja Pegawai (RKP) Harian ASN dengan Lampiran Bukti Fisik/Foto Kegiatan, Kompresi Gambar Otomatis, dan Ekspor PDF Standar e-Kinerja BKN.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
