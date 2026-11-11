@@ -15,6 +15,38 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyDCndkwUL1gWBGAGNMwJ7PmecVKwwRAInA",
+        authDomain: "app-rekap.firebaseapp.com",
+        projectId: "app-rekap",
+        storageBucket: "app-rekap.firebasestorage.app",
+        messagingSenderId: "652630149910",
+        appId: "1:652630149910:web:b3655ae68e6d8836cf1e37",
+        measurementId: "G-94LZ53G1CN"
+      };
+
+      // Initialize Firebase
+      try {
+        const app = initializeApp(firebaseConfig);
+        try {
+          getAnalytics(app);
+        } catch (e) {
+          // Analytics is optional and gracefully handles environments without IndexedDB
+        }
+      } catch (err) {
+        console.warn('Firebase initialization:', err);
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
